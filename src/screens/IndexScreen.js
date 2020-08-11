@@ -1,11 +1,27 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { StyleSheet, Text, View, FlatList, Button, TouchableOpacity } from 'react-native'
 import { Context } from '../../context/BlogContext'
 import { Feather } from '@expo/vector-icons'
 
 const IndexScreen = ({ navigation }) => {
-    const { state, deletblogPost } = useContext(Context)
+    const { state, deletblogPost, getBlogPosts } = useContext(Context)
+
+    useEffect(() => {
+        getBlogPosts()
+
+        // when ever we return to this screen this lisner will call again
+        // and will get new posts
+        const listener = navigation.addListener("didFocus", () => {
+            getBlogPosts()
+        })
+
+        // remover listener for memory leaks
+        return () => {
+            listener.remove();
+        }
+    }, [])
     return (
+
         <View>
             <Text>IndexScreen</Text>
             <FlatList
